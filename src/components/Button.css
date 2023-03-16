@@ -1,0 +1,11 @@
+.button-container {
+    width: 10vw;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+}
+
+.common-button {
+    background-color: azure;
+    border-radius: 6px;
+}

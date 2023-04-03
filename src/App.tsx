@@ -8,8 +8,9 @@ import { useFetchAxios } from "./axios/useAxios";
 import useSWR from "swr";
 import { dataFetcher } from "./fetch/useFetch";
 import { useFetchKy } from "./ky/useKy";
-import LineTo, { SteppedLineTo } from "react-lineto";
-import { useFetchNeedle } from "./needle/useNeedle";
+import { SteppedLineTo } from "react-lineto";
+import { useFetchSuperagent } from "./superagent/useSuperAgent";
+import { useCrossFetch } from "./cross-fetch/useCrossFetch";
 
 const columns = [
   {
@@ -35,7 +36,8 @@ function App() {
   const { fetchAjaxData, ajaxData } = useFetchAjax();
   const { fetchAxiosData, axiosData } = useFetchAxios();
   const { fetchKyData, kyData } = useFetchKy();
-  const { fetchNeedleData, needleData } = useFetchNeedle();
+  const { fetchSuperagentData, superagentData } = useFetchSuperagent();
+  const { fetchCrossFetchData, crossFetchData } = useCrossFetch();
 
   const [shouldSWRFetch, setShouldSWRFetch] = useState(false);
 
@@ -79,11 +81,22 @@ function App() {
   }, [data, error]);
 
   useEffect(() => {
-    if (needleData) {
-      setTableData(needleData);
+    if (superagentData) {
+      setTableData(
+        Array.isArray(superagentData) ? superagentData : [superagentData]
+      );
       setShouldSWRFetch(false);
     }
-  }, [needleData]);
+  }, [superagentData]);
+
+  useEffect(() => {
+    if (crossFetchData) {
+      setTableData(
+        Array.isArray(crossFetchData) ? crossFetchData : [crossFetchData]
+      );
+      setShouldSWRFetch(false);
+    }
+  }, [crossFetchData]);
 
   const style = {
     delay: true,
@@ -119,9 +132,14 @@ function App() {
             onClick={fetchKyData}
           ></FetchButton>
           <FetchButton
-            className="needle-button"
-            children={"GET ALL NEEDLE"}
-            onClick={fetchNeedleData}
+            className="superagent-button"
+            children={"GET ALL SUPERAGENT"}
+            onClick={fetchSuperagentData}
+          ></FetchButton>
+          <FetchButton
+            className="cross-fetch-button"
+            children={"POST CROSS FETCH"}
+            onClick={fetchCrossFetchData}
           ></FetchButton>
         </div>
         <SteppedLineTo
@@ -141,6 +159,20 @@ function App() {
         <SteppedLineTo
           from="ajax-button"
           to="ky-button"
+          fromAnchor="bottom"
+          toAnchor="top"
+          {...style}
+        />
+        <SteppedLineTo
+          from="ajax-button"
+          to="superagent-button"
+          fromAnchor="bottom"
+          toAnchor="top"
+          {...style}
+        />
+        <SteppedLineTo
+          from="ajax-button"
+          to="cross-fetch-button"
           fromAnchor="bottom"
           toAnchor="top"
           {...style}
